@@ -37,7 +37,6 @@ class Sql(object):
     def insert_comment(self, film, content, star, uid, time):
         if star == 0:
             return False
-        self.reconnect()
         content = cht_to_chs(content.replace('\n', '').replace('\r', ''))
         cursor = self.db.cursor()
         sql = "INSERT INTO comment (film, content, star, author_id, time) VALUES ('%s', '%s', '%f', '%d', '%s')" % (
