@@ -37,6 +37,7 @@ class Sql(object):
     def insert_comment(self, film, content, star, uid, time):
         if star == 0:
             return False
+        self.reconnect()
         content = cht_to_chs(content.replace('\n', '').replace('\r', ''))
         cursor = self.db.cursor()
         sql = "INSERT INTO comment (film, content, star, author_id, time) VALUES ('%s', '%s', '%f', '%d', '%s')" % (
@@ -66,6 +67,7 @@ class Sql(object):
             return True
 
     def is_exist(self, table, keyword, value):
+        self.reconnect()
         cursor = self.db.cursor()
         sql = 'SELECT COUNT(*) from %s where `%s` = "%s"' % (table, keyword, value)
         cursor.execute(sql)
@@ -74,6 +76,12 @@ class Sql(object):
             return True
         else:
             return False
+
+    def reconnect(self):
+        try:
+            self.db.ping()
+        except:
+            self.connect()
 
     def close(self):
         self.db.close()
