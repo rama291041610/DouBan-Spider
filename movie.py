@@ -66,7 +66,10 @@ class Movie(object):
         for x in type_list:
             genres += x.string.strip() + '\\'
         genres = genres[:-1]
-        runtime = soup.find(property="v:runtime").text
+        try:
+            runtime = soup.find(property="v:runtime").text
+        except:
+            runtime = re.search('<span class="pl">片长:</span> (.*?)<br/>', r.text).group(1)
         country = re.search('<span class="pl">制片国家/地区:</span> (.*?)<br/>', r.text)
         ReleaseDate_list = soup.find_all(property="v:initialReleaseDate")
         ReleaseDate = ''
