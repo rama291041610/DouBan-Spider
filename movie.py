@@ -98,7 +98,7 @@ class Movie(object):
             if booking.get('area', None):
                 return booking
             else:
-                return False
+                return None
         else:
             return None
 
