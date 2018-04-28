@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+' DouBan-Spider '
+__author__ = '惊蛰'
+
 from movie import *
 from sql import *
 import requests
