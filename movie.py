@@ -93,8 +93,12 @@ class Movie(object):
             self.set_maoyan_id()
         r = requests.get('http://m.maoyan.com/movie/' + str(self.maoyan_id) + '/box?_v_=yes', headers=headers)
         detail = re.search('<script>var AppData = (.*?);</script>', r.text)
-        if json.loads(detail.group(1)).get('area', None):
-            return json.loads(detail.group(1))
+        if detail:
+            booking = json.loads(detail.group(1))
+            if booking.get('area', None):
+                return booking
+            else:
+                return False
         else:
             return None
 
