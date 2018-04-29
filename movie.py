@@ -76,7 +76,10 @@ class Movie(object):
         for x in ReleaseDate_list:
             ReleaseDate += x.string.strip() + '\\'
         ReleaseDate = ReleaseDate[:-1]
-        director = soup.find(rel="v:directedBy").text
+        try:
+            director = soup.find(rel="v:directedBy").text
+        except:
+            director = None
         score = soup.find(property="v:average").text
         role_list_soup = soup.find_all(attrs={'class': 'info'})
         role_list = []
