@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 sql = {
-    'address': 'root',
+    'address': 'localhost',
     'port': 3306,
     'username': 'root',
     'password': 'root',
