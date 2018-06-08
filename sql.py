@@ -30,6 +30,7 @@ class Sql(object):
             self.db.commit()
         except:
             self.db.rollback()
+            return False
         finally:
             cursor.close()
             return True
@@ -46,6 +47,7 @@ class Sql(object):
             self.db.commit()
         except:
             self.db.rollback()
+            return False
         finally:
             cursor.close()
             return True
@@ -61,6 +63,7 @@ class Sql(object):
             self.db.commit()
         except:
             self.db.rollback()
+            return False
         finally:
             cursor.close()
             return True
@@ -71,10 +74,33 @@ class Sql(object):
         sql = 'SELECT COUNT(*) from %s where `%s` = "%s"' % (table, keyword, value)
         cursor.execute(sql)
         data = cursor.fetchone()
+        cursor.close()
         if data[0]:
             return True
         else:
             return False
+
+    def delete(self, table, keyword, value):
+        self.reconnect()
+        cursor = self.db.cursor()
+        sql = "DELTE FROM %s WHERE %s = '%s'" % (table, keyword, value)
+        try:
+            cursor.execute(sql)
+            self.db.commit()
+        except:
+            self.db.rollback()
+            return False
+        finally:
+            cursor.close()
+            return True
+
+    def select(self, commit):
+        self.reconnect()
+        cursor = self.db.cursor()
+        cursor.execute(commit)
+        data = cursor.fetchall()
+        cursor.close()
+        return data
 
     def reconnect(self):
         try:
@@ -90,3 +116,49 @@ def connect():
     db = Sql(sql)
     db.connect()
     return db
+
+
+def test():
+    db = connect()
+    commit = 'SELECT * FROM `film` ORDER BY `film`.`score` DESC'
+    data = db.select(commit)
+    film_list = []
+    director_list = []
+    role_list = []
+    for x in data:
+        if x[2] == 'None':
+            continue
+        if x[5] > 9.0:
+            film_list.append(x[1])
+        elif '中国' in x[-2] and('2018' in x[-2] or '2017' in x[-2] or '2016' in x[-2] or '2015' in x[-2] or'2014' in x[-2] or'2013' in x[-2] or '2012' in x[-2] or '2011' in x[-2]):
+            film_list.append(x[1])
+        if x[1] in film_list and x[2] not in director_list:
+            director_list.append(x[2])
+        if x[1] in film_list:
+            role = re.findall("'name': '(.*?)'", x[3])
+            for i in role:
+                if i not in role_list:
+                    role_list.append(i)
+    flag = 1
+    f = open('film.txt', 'w', encoding='utf-8')
+    for x in film_list:
+        f.write(str(flag) + ' ' + x + '\n')
+        flag += 1
+    f.close()
+    flag = 1
+    f = open('director.txt', 'w', encoding='utf-8')
+    for x in director_list:
+        f.write(str(flag) + ' ' + x + '\n')
+        flag += 1
+    f.close()
+    flag = 1
+    f = open('role.txt', 'w', encoding='utf-8')
+    for x in role_list:
+        f.write(str(flag) + ' ' + x + '\n')
+        flag += 1
+    f.close()
+    print(len(film_list), len(director_list), len(role_list))
+
+
+if __name__ == '__main__':
+    test()
