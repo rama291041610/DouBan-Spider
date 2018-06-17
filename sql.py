@@ -94,10 +94,15 @@ class Sql(object):
             cursor.close()
             return True
 
-    def select(self, commit):
+    def select(self, table, film):
         self.reconnect()
+        if table == 'film':
+            kw = 'name'
+        elif table == 'comment':
+            kw = 'film'
+        sql = 'SELECT * FROM %s where `%s` = "%s"' % (table, kw, film)
         cursor = self.db.cursor()
-        cursor.execute(commit)
+        cursor.execute(sql)
         data = cursor.fetchall()
         cursor.close()
         return data
@@ -161,4 +166,7 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    db = connect()
+    data = db.select('film', '富春山居图')
+    print(list(data[0][3]))
+    db.close()
